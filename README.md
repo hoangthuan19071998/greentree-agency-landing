@@ -1,32 +1,45 @@
-# React + TypeScript + Vite
+# Green Tree Agency — Landing Page
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Marketing website for Green Tree Agency, a digital growth studio in Da Nang.
 
-Currently, two official plugins are available:
+**Live:** https://greentree-agency.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![Green Tree Agency screenshot](screenshots/home.png)
 
-## React Compiler
+## Highlights
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Pinned horizontal scroll journey** on large screens, built with plain React refs and scroll math (no animation library). It falls back to a normal vertical layout on tablets, short windows and when `prefers-reduced-motion` is on.
+- **Custom cursor** rendered with `requestAnimationFrame`, enabled only on fine-pointer devices
+- **Tap ripple** feedback on touch devices
+- Scroll progress indicator and an animated tree-ring background (SVG)
+- Contact modal with a service picker, and a downloadable company profile PDF
+- Responsive from mobile to wide desktop
 
-## Expanding the Oxlint configuration
+## Tech stack
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+React 19 · TypeScript · Vite · Tailwind CSS 4 · Lucide icons · Oxlint · Vercel
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Getting started
+
+```bash
+npm install
+npm run dev      # start dev server
+npm run build    # type-check and build
+npm run lint     # oxlint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Project structure
+
+```
+src/
+├── App.tsx                    # layout, scroll progress, horizontal-journey switch
+└── components/
+    ├── HeroSection.tsx
+    ├── HorizontalJourney.tsx  # pinned horizontal scroll section
+    ├── ServicesSection.tsx
+    ├── ProcessSection.tsx
+    ├── SelectedWorkSection.tsx
+    ├── ContactSection.tsx / ContactModal.tsx
+    ├── CustomCursor.tsx / TapRipple.tsx
+    └── TreeRingsBackground.tsx / TreeRingSymbol.tsx
+```

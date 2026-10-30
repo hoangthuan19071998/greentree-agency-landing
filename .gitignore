@@ -25,3 +25,13 @@ dist-ssr
 .vercel
 .env*
 tmp
+# AI tooling & generated artifacts
+.agents/
+.codex/
+.gemini/
+.impeccable/
+.playwright-mcp/
+.github/hooks/
+__pycache__/
+docs/company-profile/
+output/
