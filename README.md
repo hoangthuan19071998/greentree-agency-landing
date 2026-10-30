@@ -1,5 +1,7 @@
 # Green Tree Agency — Landing Page
 
+[![CI](https://github.com/hoangthuan19071998/greentree-agency-landing/actions/workflows/ci.yml/badge.svg)](https://github.com/hoangthuan19071998/greentree-agency-landing/actions/workflows/ci.yml)
+
 Marketing website for Green Tree Agency, a digital growth studio in Da Nang.
 
 **Live:** https://greentree-agency.vercel.app
