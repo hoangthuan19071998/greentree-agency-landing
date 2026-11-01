@@ -1,6 +1,27 @@
-# Green Tree Agency — website
+# Green Tree Agency — Landing Page
 
-Single-page marketing site for Green Tree Agency (Da Nang). React 19 + Vite + Tailwind CSS 4.
+[![CI](https://github.com/hoangthuan19071998/greentree-agency-landing/actions/workflows/ci.yml/badge.svg)](https://github.com/hoangthuan19071998/greentree-agency-landing/actions/workflows/ci.yml)
+
+Marketing website for Green Tree Agency, a digital growth studio in Da Nang.
+
+**Live:** https://greentree-agency.vercel.app
+
+![Green Tree Agency screenshot](screenshots/home.png)
+
+## Highlights
+
+- **Hero film drawn in code**: a seed is sown, roots spread, the tree grows, the camera dives into its trunk and the growth rings open with the services. Rendered live on a canvas (no images or video), paused off screen, with a pause control and a still frame for `prefers-reduced-motion`.
+- **Pinned horizontal scroll journey** on large screens, built with plain React refs and scroll math (no animation library). It falls back to a normal vertical layout on tablets, short windows and when `prefers-reduced-motion` is on.
+- **Custom cursor** rendered with `requestAnimationFrame`, enabled only on fine-pointer devices
+- **Tap ripple** feedback on touch devices
+- Scroll progress indicator and a downloadable company profile PDF
+- Responsive from mobile to wide desktop
+
+## Tech stack
+
+React 19 · TypeScript · Vite · Tailwind CSS 4 · Canvas 2D · Lucide icons · Oxlint · Vercel
+
+## Getting started
 
 ```bash
 npm install
@@ -9,7 +30,7 @@ npm run build    # typecheck + production build to dist/
 npm run lint     # oxlint
 ```
 
-## Structure
+## Project structure
 
 ```
 index.html                     entry for /                 -> src/pages/home
@@ -83,9 +104,8 @@ else the same markup stacks vertically. Breakpoints are in `MEDIA` in
 
 ## Hero film
 
-Both pages open with `<FilmHero />`: a seed is sown, roots spread, the tree
-grows, the camera dives into the trunk and the growth rings open with the
-services. Change its tempo with the `timing` prop or `setHeroTiming()`:
+Both pages open with `<FilmHero />`. Change its tempo with the `timing` prop or
+`setHeroTiming()`:
 
 ```tsx
 <FilmHero timing={{ speed: 0.8 }} />                     // everything 20% slower

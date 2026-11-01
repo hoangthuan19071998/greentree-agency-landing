@@ -29,3 +29,12 @@ tmp
 /local-*.png
 /prod-*.png
 .playwright-mcp/
+# AI tooling & generated artifacts
+.agents/
+.codex/
+.gemini/
+.impeccable/
+.github/hooks/
+__pycache__/
+docs/company-profile/
+output/
