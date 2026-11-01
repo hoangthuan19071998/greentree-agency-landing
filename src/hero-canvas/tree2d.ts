@@ -1,4 +1,4 @@
-import { TAU, clamp, mulberry32 } from '../hero-engine/math'
+import { TAU, clamp, mulberry32 } from './math'
 
 // The tree, its roots and the grass at its foot, in height units
 // (1 = canvas height), base at (0, 0), y up negative. Every element carries

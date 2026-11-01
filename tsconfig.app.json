@@ -20,7 +20,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Aliases (keep in sync with vite.config.ts) */
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src"]
 }

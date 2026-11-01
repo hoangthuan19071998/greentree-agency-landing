@@ -1,0 +1,12 @@
+/*
+  Styles for the /demo page only. Loaded after src/styles/index.css.
+
+  The page root carries `.page-demo`, so scope every rule under it; that way
+  nothing here can leak into the homepage, e.g.
+
+    .page-demo .hero-ring { transition: transform .4s var(--ease-grow); }
+    .page-demo .process-card:hover { transform: translateY(-6px); }
+
+  New classes added to components in this folder can be used unscoped, as
+  long as their names don't already exist in index.css.
+*/

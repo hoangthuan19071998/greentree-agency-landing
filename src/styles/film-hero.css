@@ -1,0 +1,173 @@
+/*
+  The living-brand film hero (src/components/FilmHero.tsx), shared by the
+  homepage and /demo.
+*/
+
+.film-hero {
+  position: relative;
+  /* the viewport under the 80px sticky header */
+  height: calc(100svh - 80px);
+  min-height: 560px;
+  max-height: 1080px;
+  overflow: hidden;
+  background: #10221a;
+  color: #f2f1ea;
+  isolation: isolate;
+}
+.film-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.film-hero-grain {
+  position: absolute;
+  inset: -160px;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  animation: film-grain 1s steps(6) infinite;
+}
+@keyframes film-grain {
+  to { transform: translate3d(96px, 64px, 0); }
+}
+
+.film-hero-copy {
+  position: absolute;
+  left: max(56px, 7.5vw);
+  top: 26%;
+  width: min(46vw, 640px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* the two headlines (and two subs) share one place and cross-fade */
+.film-hero-stack {
+  display: grid;
+  width: 100%;
+}
+.film-hero-stack > * {
+  grid-area: 1 / 1;
+}
+.film-hero-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(44px, 6.4vw, 104px);
+  line-height: 1.04;
+  letter-spacing: -0.005em;
+  will-change: opacity, transform;
+}
+.film-hero-title em {
+  color: #c9d8b0;
+}
+.film-hero-sub {
+  margin: 28px 0 0;
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.6;
+  color: #cdd3cb;
+  will-change: opacity, transform;
+}
+.film-hero-cta {
+  margin-top: 36px;
+}
+
+.film-hero-foot {
+  position: absolute;
+  left: max(56px, 7.5vw);
+  right: max(56px, 6.6vw);
+  bottom: 28px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #cdd3cb;
+}
+.film-hero-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.film-hero-toggle {
+  border: 1px solid rgba(201, 216, 176, 0.35);
+  border-radius: 999px;
+  background: rgba(16, 34, 26, 0.6);
+  color: #f2f1ea;
+  font: inherit;
+  letter-spacing: 0.12em;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.3s var(--ease-grow);
+}
+.film-hero-toggle:hover {
+  border-color: #c9d8b0;
+}
+.film-hero-toggle:focus-visible {
+  outline: 2px solid #c9d8b0;
+  outline-offset: 3px;
+}
+.film-hero-track {
+  position: relative;
+  height: 1px;
+  background: rgba(201, 216, 176, 0.25);
+}
+.film-hero-fill {
+  position: absolute;
+  inset: -1px 0;
+  border-radius: 3px;
+  background: #c9d8b0;
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
+}
+.film-hero-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 11px;
+  color: #a9bba6;
+}
+.film-hero-labels a {
+  color: inherit;
+  text-decoration: none;
+}
+.film-hero-labels a:hover {
+  color: #c9d8b0;
+}
+
+/* compact: copy on top, the film's tree and rings centred below it */
+@media (max-aspect-ratio: 21/20) {
+  .film-hero-copy {
+    left: 16px;
+    right: 16px;
+    top: 7%;
+    width: auto;
+  }
+  .film-hero-title {
+    font-size: clamp(36px, 10vw, 64px);
+  }
+  .film-hero-sub {
+    margin-top: 14px;
+  }
+  .film-hero-cta {
+    margin-top: 20px;
+  }
+  .film-hero-foot {
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+  }
+  .film-hero-labels span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-hero-grain {
+    animation: none;
+  }
+  .film-hero-toggle {
+    display: none;
+  }
+}

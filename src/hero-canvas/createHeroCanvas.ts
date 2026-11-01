@@ -1,4 +1,4 @@
-import { TAU, clamp, easeInOut, lerp, mulberry32, smoothstep } from '../hero-engine/math'
+import { TAU, clamp, easeInOut, lerp, mulberry32, smoothstep } from './math'
 import { DURATION, FADE_OUT, SOW, fade, storyAt } from './timeline'
 import { buildTree } from './tree2d'
 import { BASE, BRANCHES, LEAF_PALETTE, LEAVES_B64, TREE_H } from './treeData'
@@ -208,7 +208,16 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
   )
   const wobble = new Float32Array(STEPS)
 
-  const layout = () => ({ bx: W * 0.705, by: H * 0.84, u: H })
+  // Two compositions: wide (copy left, tree and rings right) and compact
+  // (narrow, portrait screens: copy on top, tree and rings centred below).
+  const frameFor = (w: number, h: number) => {
+    const compact = w / h < 1.05
+    return compact
+      ? { compact, bx: w * 0.5, by: h * 0.9, u: Math.min(h * 0.8, w * 1.25), rcx: w * 0.5, rcy: h * 0.64, ru: Math.min(h, w * 1.3) * 0.85, closeX: w * 0.5, closeY: h * 0.74, glowTree: [0.5, 0.58], glowRings: [0.5, 0.64] }
+      : { compact, bx: w * 0.705, by: h * 0.84, u: h, rcx: w * 0.75, rcy: h * 0.52, ru: h, closeX: w * 0.6, closeY: h * 0.64, glowTree: [0.66, 0.32], glowRings: [0.74, 0.5] }
+  }
+  let F = frameFor(1, 1)
+  const layout = () => ({ bx: F.bx, by: F.by, u: F.u })
 
   // ---- background --------------------------------------------------------
 
@@ -616,7 +625,7 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
 
   // ---- rings ---------------------------------------------------------------
 
-  const ringRadius = (i: number, push: number) => H * (0.045 + i * 0.043 * (1 + i * 0.014)) * push
+  const ringRadius = (i: number, push: number) => F.ru * (0.045 + i * 0.043 * (1 + i * 0.014)) * push
   /** radius of ring i at angle th, following its wobble */
   const ringAt = (i: number, th: number, R: number) => {
     const f = ((((th % TAU) + TAU) % TAU) / TAU) * STEPS
@@ -637,8 +646,8 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
     const grow = smoothstep(DIVE_END - 0.05, DIVE_END + 1.5, g)
     if (grow <= 0) return
     const push = lerp(0.5, 1, easeInOut(smoothstep(DIVE_END - 0.05, DIVE_END + 1.9, g)))
-    const cx = W * 0.75
-    const cy = H * 0.52
+    const cx = F.rcx
+    const cy = F.rcy
     const spin = g * 0.02
     const drift = g * 0.06
     for (let s = 0; s < STEPS; s++) {
@@ -697,7 +706,7 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
       const phase = ((g - DIVE_END - 1.5) % 2.4) / 1.7
       if (phase < 1) {
         const r = lerp(ringRadius(0, push), ringRadius(15, push), easeInOut(phase))
-        const band = H * 0.04
+        const band = F.ru * 0.04
         const a = Math.sin(phase * Math.PI) * 0.24
         const wave = ctx.createRadialGradient(cx, cy, Math.max(0, r - band), cx, cy, r + band)
         wave.addColorStop(0, `rgba(${LICHEN}, 0)`)
@@ -715,7 +724,8 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
     // rings recede behind the copy on the left
     ctx.globalAlpha = grow
     ctx.fillStyle = ringMask
-    ctx.fillRect(0, 0, W * 0.62, H)
+    if (F.compact) ctx.fillRect(0, 0, W, H * 0.5)
+    else ctx.fillRect(0, 0, W * 0.62, H)
     ctx.globalAlpha = 1
 
     drawLabels(g, cx, cy, push)
@@ -728,7 +738,7 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
   let glyphSize = 0
   const glyphOverhang = 0.35
   function buildGlyphs() {
-    glyphSize = H * 0.026
+    glyphSize = F.ru * 0.026
     const font = `italic 400 ${glyphSize}px "Cormorant Garamond", Georgia, serif`
     glyphs = LABELS.map(([text]) =>
       [...text].map((ch) => {
@@ -809,8 +819,8 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
   function drawMotes(g: number, zoom: number) {
     const a = smoothstep(2.5, 4.5, g) * (1 - 0.85 * fade(g, DIVE_START + 0.3, DIVE_END - 0.3, DIVE_END + 0.2, DIVE_END + 1.2))
     if (a <= 0) return
-    const cx = W * 0.75
-    const cy = H * 0.52
+    const cx = F.rcx
+    const cy = F.rcy
     const k = 1 + (zoom - 1) * 0.06
     ctx.fillStyle = `rgba(${LICHEN}, ${0.25 * a})`
     ctx.beginPath()
@@ -837,8 +847,8 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
     // the opening close-up pulls back as the tree grows
     const pull = 1 - easeInOut(clamp((S - 1.3) / (SOW + PULLBACK_END - 1.3)))
     const cam = 1 + (CLOSE_UP - 1) * pull
-    const ax = lerp(bx, W * 0.6, pull)
-    const ay = lerp(by, H * 0.64, pull)
+    const ax = lerp(bx, F.closeX, pull)
+    const ay = lerp(by, F.closeY, pull)
 
     // the dive: exponential zoom into the trunk, gliding to the rings' centre
     const dive = clamp((g - DIVE_START) / (DIVE_END - DIVE_START))
@@ -853,7 +863,7 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
       ctx.translate(ax, ay)
       ctx.scale(cam, cam)
       ctx.translate(-bx, -by)
-      ctx.translate(lerp(px, W * 0.75, glide), lerp(py, H * 0.52, glide))
+      ctx.translate(lerp(px, F.rcx, glide), lerp(py, F.rcy, glide))
       ctx.scale(zoom, zoom)
       ctx.translate(-px, -py)
       drawSoil(S, bx, by, u)
@@ -901,9 +911,11 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
       dpr = ratio
       canvas.width = Math.round(w * ratio)
       canvas.height = Math.round(h * ratio)
-      glowTree = plate(0.66, 0.32)
-      glowRings = plate(0.74, 0.5)
-      ringMask = ctx.createLinearGradient(W * 0.3, 0, W * 0.62, 0)
+      F = frameFor(w, h)
+      glowTree = plate(F.glowTree[0], F.glowTree[1])
+      glowRings = plate(F.glowRings[0], F.glowRings[1])
+      // rings recede behind the copy: to the left (wide) or the top (compact)
+      ringMask = F.compact ? ctx.createLinearGradient(0, H * 0.18, 0, H * 0.5) : ctx.createLinearGradient(W * 0.3, 0, W * 0.62, 0)
       ringMask.addColorStop(0, 'rgba(16, 34, 26, 0.88)')
       ringMask.addColorStop(1, 'rgba(16, 34, 26, 0)')
       resetSettled()
