@@ -25,3 +25,7 @@ dist-ssr
 .vercel
 .env*
 tmp
+# Local QA screenshots / browser automation output
+/local-*.png
+/prod-*.png
+.playwright-mcp/

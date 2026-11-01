@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-// import React
+
 
 export const TreeRingSymbol: FC = () => {
   return (

@@ -1,5 +1,8 @@
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { MEDIA } from '../config/site'
+import { matches } from '../hooks/useMediaQuery'
+import { RingIcon } from './RingIcon'
 
 export const CustomCursor: FC = () => {
   const curRef = useRef<HTMLDivElement>(null)
@@ -8,9 +11,7 @@ export const CustomCursor: FC = () => {
   const [active, setActive] = useState(false)
 
   useEffect(() => {
-    if (!window.matchMedia || !window.matchMedia('(pointer: fine)').matches) {
-      return
-    }
+    if (!matches(MEDIA.finePointer)) return
 
     let mx = -200
     let my = -200
@@ -72,16 +73,7 @@ export const CustomCursor: FC = () => {
     <>
       <div className="cur" ref={curRef} aria-hidden="true">
         <div className={ringClass}>
-          <svg
-            className="ring-ico"
-            viewBox="0 0 100 100"
-            width="46"
-            height="46"
-            aria-hidden="true"
-            style={{ strokeWidth: 3.2 }}
-          >
-            <use href="#gt-ring" />
-          </svg>
+          <RingIcon size={46} strokeWidth={3.2} />
         </div>
       </div>
       <div className={dotClass} ref={dotRef} aria-hidden="true" />

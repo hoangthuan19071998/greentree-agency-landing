@@ -1,27 +1,50 @@
-import type { FC } from 'react'
+import type { FC, RefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
-// import React
+import { COMPANY_PROFILE, LOGO, MEDIA, SECTION_LINKS } from '../config/site'
+import { RingButton } from './RingButton'
 
 interface NavbarProps {
-  progressRef?: React.RefObject<HTMLDivElement | null>
+  progressRef?: RefObject<HTMLDivElement | null>
 }
+
+const NavLinks: FC<{ linkClass?: string; onNavigate?: () => void }> = ({
+  linkClass,
+  onNavigate,
+}) => (
+  <>
+    {SECTION_LINKS.map((l) => (
+      <a key={l.href} className={linkClass} href={l.href} onClick={onNavigate}>
+        {l.label}
+      </a>
+    ))}
+    <a
+      className={linkClass}
+      href={COMPANY_PROFILE.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={COMPANY_PROFILE.ariaLabel}
+      onClick={onNavigate}
+    >
+      {COMPANY_PROFILE.label}
+    </a>
+  </>
+)
 
 export const Navbar: FC<NavbarProps> = ({ progressRef }) => {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
 
+  // While the compact menu is open: Esc closes it, and widening to the
+  // desktop nav closes it too.
   useEffect(() => {
     if (!menuOpen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setMenuOpen(false)
-        menuButtonRef.current?.focus()
-      }
+      if (e.key !== 'Escape') return
+      setMenuOpen(false)
+      menuButtonRef.current?.focus()
     }
-    const mq = window.matchMedia('(min-width: 1101px)')
-    const onMq = () => {
-      if (mq.matches) setMenuOpen(false)
-    }
+    const mq = window.matchMedia(MEDIA.desktopNav)
+    const onMq = () => mq.matches && setMenuOpen(false)
     window.addEventListener('keydown', onKey)
     mq.addEventListener('change', onMq)
     return () => {
@@ -33,66 +56,20 @@ export const Navbar: FC<NavbarProps> = ({ progressRef }) => {
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className="sticky top-0 z-20 bg-[#14261E]">
-      <div
-        className="pad mx-auto flex items-center justify-between gap-6"
-        style={{
-          maxWidth: '1440px',
-          padding: '0 56px',
-          height: '80px',
-        }}
-      >
-        {/* Brand / Logo */}
-        <a
-          href="#top"
-          className="group flex shrink-0 items-center gap-3 whitespace-nowrap no-underline text-[#F2F1EA]"
-          onClick={closeMenu}
-        >
-          <span className="w-9 h-9 rounded-full bg-[#C9D8B0] flex items-center justify-center p-1 shadow-sm shrink-0 transition-transform duration-300 group-hover:scale-105">
-            <img
-              src="/logo_image/gta-symbol-xanh-128.png"
-              alt="Green Tree Agency Logo"
-              width={32}
-              height={32}
-              className="w-full h-full object-contain"
-            />
+    <header className="site-header">
+      <div className="pad site-header-bar">
+        <a href="#top" className="brand" onClick={closeMenu}>
+          <span className="brand-mark">
+            <img src={LOGO(128)} alt="Green Tree Agency Logo" width={32} height={32} />
           </span>
-          <span className="serif text-[26px] tracking-[0.01em]">Green Tree</span>
-          <span className="brand-tag text-[11px] tracking-[0.22em] uppercase text-[#C9D8B0] mt-1">
-            Agency
-          </span>
+          <span className="serif brand-name">Green Tree</span>
+          <span className="brand-tag">Agency</span>
         </a>
 
-        {/* Navigation links */}
-        <nav
-          className="navlinks items-center"
-          aria-label="Main"
-          style={{ gap: '36px' }}
-        >
-          <a className="navlink" href="#about">
-            About
-          </a>
-          <a className="navlink" href="#services">
-            Services
-          </a>
-          <a className="navlink" href="#process">
-            Process
-          </a>
-          <a className="navlink" href="#work">
-            Work
-          </a>
-          <a
-            className="navlink"
-            href="/greentree-company-profile.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open the Green Tree Agency company profile PDF in a new tab"
-          >
-            Company Profile
-          </a>
+        <nav className="navlinks" aria-label="Main">
+          <NavLinks linkClass="navlink" />
         </nav>
 
-        {/* Compact section menu */}
         <button
           ref={menuButtonRef}
           type="button"
@@ -102,65 +79,37 @@ export const Navbar: FC<NavbarProps> = ({ progressRef }) => {
           aria-controls="mobile-menu"
           onClick={() => setMenuOpen((o) => !o)}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
-            {menuOpen ? (
-              <path d="M6 6l12 12M18 6L6 18" />
-            ) : (
-              <path d="M4 7h16M4 12h16M4 17h16" />
-            )}
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <path d={menuOpen ? 'M6 6l12 12M18 6L6 18' : 'M4 7h16M4 12h16M4 17h16'} />
           </svg>
         </button>
 
-        {/* Compact booking link */}
         <a className="m-book" href="#contact" aria-label="Book a call" onClick={closeMenu}>
           Book a call
         </a>
 
-        {/* CTA Button */}
-        <a className="btn btn-light hdr-btn" href="#contact">
-          <span className="btn-fill" />
-          <span>Book a call</span>
-          <span className="btn-ring">
-            <svg
-              className="ring-ico"
-              viewBox="0 0 100 100"
-              width="26"
-              height="26"
-              aria-hidden="true"
-              style={{ strokeWidth: 4.5 }}
-            >
-              <use href="#gt-ring" />
-            </svg>
-          </span>
-        </a>
+        <RingButton tone="light" className="hdr-btn" href="#contact">
+          Book a call
+        </RingButton>
       </div>
 
-      {/* Mobile section menu */}
       {menuOpen && (
         <nav id="mobile-menu" className="m-menu" aria-label="Sections">
-          <a href="#about" onClick={closeMenu}>About</a>
-          <a href="#services" onClick={closeMenu}>Services</a>
-          <a href="#process" onClick={closeMenu}>Process</a>
-          <a href="#work" onClick={closeMenu}>Work</a>
-          <a
-            href="/greentree-company-profile.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open the Green Tree Agency company profile PDF in a new tab"
-            onClick={closeMenu}
-          >
-            Company Profile
-          </a>
+          <NavLinks onNavigate={closeMenu} />
         </nav>
       )}
 
-      {/* Reading Progress Line */}
-      <div
-        className="progress"
-        ref={progressRef}
-        style={{ height: '2px', background: '#C9D8B0' }}
-      />
+      {/* Reading progress, driven by useScrollScene */}
+      <div className="progress" ref={progressRef} />
     </header>
   )
 }
-

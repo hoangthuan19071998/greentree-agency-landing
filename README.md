@@ -1,32 +1,52 @@
-# React + TypeScript + Vite
+# Green Tree Agency — website
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Single-page marketing site for Green Tree Agency (Da Nang). React 19 + Vite + Tailwind CSS 4.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev      # dev server (also on LAN via --host)
+npm run build    # typecheck + production build to dist/
+npm run lint     # oxlint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Structure
+
+```
+src/
+  App.tsx              page composition + scroll mode (horizontal vs stacked)
+  index.css            design tokens (@theme) and all component/section styles
+  config/site.ts       contact details, nav links, logo paths, media queries
+  data/                page copy: services, process steps, selected work
+  hooks/
+    useMediaQuery      live boolean for a media query
+    useRevealOnScroll  adds .in to .rv elements as they enter the viewport
+    useScrollScene     reading progress, hero ring, pinned horizontal journey
+  components/          shared UI: Navbar, RingButton, RingIcon, cursor, tap ripple
+  sections/            one file per page section, top to bottom
+public/                images, logos, company profile PDF
+```
+
+Contact details and nav links live in `src/config/site.ts`; most copy changes
+happen in `src/data/`.
+
+## Styling
+
+- Colours follow `DESIGN.md`. Use the token names (`heartwood`, `canopy`, `moss`,
+  `lichen`, `linen`, …) as CSS variables (`var(--color-moss)`) or Tailwind
+  utilities (`text-moss`). Don't add new greens.
+- Sections use semantic classes in `index.css`; the responsive overrides are
+  grouped at the end of that file so they win by source order, without `!important`.
+- Inline `style` is reserved for values computed at runtime (carousel offsets,
+  per-card tone variables).
+
+## Horizontal journey
+
+On viewports at least 1101×800 without reduced motion, the "Who we are" and
+"Services" panels are pinned and scroll sideways (`.js-hz` on the root). Everywhere
+else the same markup stacks vertically. Breakpoints are in `MEDIA` in
+`src/config/site.ts` and must match the `@media` rules in `index.css`.
+
+## Dev-only pages
+
+`hero-lab.html` and `hero-lab-2d.html` (with `src/hero-*`) are experiments for
+an animated hero. They are not part of the production build.

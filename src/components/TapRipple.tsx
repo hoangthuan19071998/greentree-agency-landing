@@ -1,5 +1,6 @@
 import type { FC } from 'react'
 import { useEffect, useRef } from 'react'
+import { RingIcon } from './RingIcon'
 
 export const TapRipple: FC = () => {
   const tapRef = useRef<HTMLDivElement>(null)
@@ -23,16 +24,7 @@ export const TapRipple: FC = () => {
 
   return (
     <div className="tap" ref={tapRef} aria-hidden="true">
-      <svg
-        className="ring-ico"
-        viewBox="0 0 100 100"
-        width="96"
-        height="96"
-        aria-hidden="true"
-        style={{ strokeWidth: 2.4 }}
-      >
-        <use href="#gt-ring" />
-      </svg>
+      <RingIcon size={96} strokeWidth={2.4} />
     </div>
   )
 }
