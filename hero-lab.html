@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero lab</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #14261e; overflow: hidden; font-family: Manrope, system-ui, sans-serif; }
+      canvas { display: block; width: 100vw; height: 100vh; }
+      .bar { position: fixed; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 12px; align-items: center; color: #c9d8b0; font-size: 12px; letter-spacing: .1em; }
+      .bar input { flex: 1; accent-color: #c9d8b0; }
+      .bar button { background: #1f3a2e; color: #f2f1ea; border: 1px solid #3b5e4c; border-radius: 999px; padding: 6px 12px; font: inherit; cursor: pointer; }
+      body.still .bar { display: none; }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div class="bar">
+      <button id="play" type="button">Pause</button>
+      <input id="scrub" type="range" min="0" max="16" step="0.01" value="0" aria-label="Time" />
+      <span id="time">0.00s</span>
+    </div>
+    <script type="module" src="/src/hero-lab/main.ts"></script>
+  </body>
+</html>
