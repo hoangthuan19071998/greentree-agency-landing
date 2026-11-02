@@ -43,6 +43,7 @@ const TRUNK_AIM_REF = 190
 /** how close the opening shot starts */
 const CLOSE_UP = 2.4
 
+/** Default ring labels with their ring and start angle; the text can be swapped with setLabels. */
 const LABELS: [string, number, number][] = [
   ['Strategy', 1, -1.75],
   ['Brand', 3, -1.15],
@@ -53,6 +54,8 @@ const LABELS: [string, number, number][] = [
 
 export interface HeroCanvasOptions {
   onFrame?: (t: number) => void
+  /** always the compact composition: the tree centred, whatever the shape */
+  centred?: boolean
 }
 
 /** A tileable noise texture for a CSS grain overlay. */
@@ -211,6 +214,8 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
   // Two compositions: wide (copy left, tree and rings right) and compact
   // (narrow, portrait screens: copy on top, tree and rings centred below).
   const frameFor = (w: number, h: number) => {
+    // centred (e.g. the contact popup's panel): the tree alone, a little larger
+    if (opts.centred) return { compact: true, bx: w * 0.5, by: h * 0.86, u: Math.min(h * 0.86, w * 1.3), rcx: w * 0.5, rcy: h * 0.5, ru: Math.min(h, w * 1.3) * 0.85, closeX: w * 0.5, closeY: h * 0.7, glowTree: [0.5, 0.5], glowRings: [0.5, 0.5] }
     const compact = w / h < 1.05
     return compact
       ? { compact, bx: w * 0.5, by: h * 0.9, u: Math.min(h * 0.8, w * 1.25), rcx: w * 0.5, rcy: h * 0.64, ru: Math.min(h, w * 1.3) * 0.85, closeX: w * 0.5, closeY: h * 0.74, glowTree: [0.5, 0.58], glowRings: [0.5, 0.64] }
@@ -735,12 +740,13 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
   // instead each letter is rendered once into a bitmap and stamped turned.
   type Glyph = { img: ImageBitmap | HTMLCanvasElement; w: number }
   let glyphs: Glyph[][] = []
+  let labelText = LABELS.map(([text]) => text)
   let glyphSize = 0
   const glyphOverhang = 0.35
   function buildGlyphs() {
     glyphSize = F.ru * 0.026
     const font = `italic 400 ${glyphSize}px "Cormorant Garamond", Georgia, serif`
-    glyphs = LABELS.map(([text]) =>
+    glyphs = labelText.map((text) =>
       [...text].map((ch) => {
         const probe = layerCanvas(1, 1).getContext('2d') as CanvasRenderingContext2D
         probe.font = font
@@ -762,7 +768,8 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
   function drawLabels(g: number, cx: number, cy: number, push: number) {
     if (glyphs.length === 0) buildGlyphs()
     const size = glyphSize
-    LABELS.forEach(([text, i, start], k) => {
+    LABELS.forEach(([, i, start], k) => {
+      const text = labelText[k]
       const t0 = DIVE_END + 0.6 + k * 0.3
       const a = smoothstep(t0, t0 + 0.4, g)
       if (a <= 0) return
@@ -895,16 +902,37 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
     opts.onFrame?.(t)
   }
 
+  /**
+   * The grown tree, held: the hero's frame at the end of its growth, with the
+   * leaves still falling. `time` is seconds since the hold began.
+   */
+  function renderGrown(time: number) {
+    // well past growth, so every falling leaf is already on its cycle
+    const g = PULLBACK_END + 12 + time
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    background(PULLBACK_END)
+    const { bx, by, u } = layout()
+    drawSoil(SOW + g, bx, by, u)
+    drawTree(g, 1, bx, by, u)
+    drawMotes(g, 1)
+  }
+
   let raf = 0
   let t0 = 0
   let offset = 0
+  let render = renderAt
   const loop = (now: number) => {
-    renderAt((now - t0) / 1000 + offset)
+    render((now - t0) / 1000 + offset)
     raf = requestAnimationFrame(loop)
   }
 
   return {
     renderAt,
+    renderGrown,
+    /** plays the grown tree (renderGrown) instead of the film */
+    holdGrown() {
+      render = renderGrown
+    },
     setSize(w: number, h: number, ratio: number) {
       W = w
       H = h
@@ -939,6 +967,11 @@ export function createHeroCanvas(canvas: HTMLCanvasElement, opts: HeroCanvasOpti
     stop() {
       cancelAnimationFrame(raf)
       raf = 0
+    },
+    /** Replaces the ring labels (one per ring, in order), e.g. for another language. */
+    setLabels(texts: readonly string[]) {
+      labelText = LABELS.map(([text], k) => texts[k] ?? text)
+      glyphs = []
     },
     get playing() {
       return raf !== 0

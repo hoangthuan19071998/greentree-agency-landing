@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { createHeroCanvas, grainDataURL } from '@/hero-canvas/createHeroCanvas'
-import { CHAPTERS, copyAt, phaseTime, setHeroTiming } from '@/hero-canvas/timeline'
+import { copyAt, phaseTime, setHeroTiming } from '@/hero-canvas/timeline'
 import type { HeroTiming } from '@/hero-canvas/timeline'
 import { MEDIA } from '@/config/site'
 
@@ -13,7 +13,6 @@ export interface HeroFilmRefs {
   headlineB: RefObject<HTMLParagraphElement | null>
   subA: RefObject<HTMLParagraphElement | null>
   subB: RefObject<HTMLParagraphElement | null>
-  chapter: RefObject<HTMLSpanElement | null>
   fill: RefObject<HTMLDivElement | null>
 }
 
@@ -25,19 +24,34 @@ const MAX_DPR = 1.5
  * playback rules — pause when off screen or in a background tab, honour
  * reduced motion, and let the visitor pause it (moving content over 5s must
  * be pausable). The copy is written straight to the DOM each frame through
- * refs, so React never re-renders during playback.
+ * refs; React re-renders only when the chapter changes (twice a loop).
+ * `labels` replaces the words written on the rings, e.g. for another language.
  */
-export function useHeroFilm(refs: HeroFilmRefs, timing?: HeroTiming) {
+export function useHeroFilm(refs: HeroFilmRefs, timing?: HeroTiming, labels?: readonly string[]) {
   const [paused, setPaused] = useState(false)
+  const [chapter, setChapter] = useState(0)
   const pausedRef = useRef(false)
-  const controls = useRef<{ play: () => void; pause: () => void } | null>(null)
+  const labelsRef = useRef<readonly string[] | undefined>(undefined)
+  const controls = useRef<{
+    play: () => void
+    pause: () => void
+    setLabels: (texts: readonly string[]) => void
+  } | null>(null)
 
-  // Tempo: applied before the film starts, and live whenever it changes.
-  // Declared first so it runs before the effect that starts playback.
-  const timingKey = JSON.stringify(timing ?? {})
+  // Tempo: only when a `timing` prop is given, applied before the film starts
+  // and live whenever it changes. Without it, the module-wide timing set in
+  // timeline.ts stands. Declared first so it runs before playback starts.
+  const timingKey = timing ? JSON.stringify(timing) : null
   useEffect(() => {
-    setHeroTiming(JSON.parse(timingKey) as HeroTiming)
+    if (timingKey) setHeroTiming(JSON.parse(timingKey) as HeroTiming)
   }, [timingKey])
+
+  // Ring labels: picked up when the film starts (below), swapped live after.
+  const labelsKey = labels ? JSON.stringify(labels) : null
+  useEffect(() => {
+    labelsRef.current = labelsKey ? (JSON.parse(labelsKey) as string[]) : undefined
+    if (labelsRef.current) controls.current?.setLabels(labelsRef.current)
+  }, [labelsKey])
 
   useEffect(() => {
     const section = refs.section.current
@@ -57,7 +71,7 @@ export function useHeroFilm(refs: HeroFilmRefs, timing?: HeroTiming) {
       el.style.opacity = String(q)
       el.style.transform = `translate3d(0, ${((1 - q) * 14).toFixed(2)}px, 0)`
     }
-    let chapter = -1
+    let lastChapter = 0
     // with reduced motion: one still, the grown tree
     let lastT = reduce ? phaseTime('hold') : 0
     let lastFill = ''
@@ -75,12 +89,13 @@ export function useHeroFilm(refs: HeroFilmRefs, timing?: HeroTiming) {
           lastFill = fill
           refs.fill.current.style.transform = fill
         }
-        if (c.chapter !== chapter && refs.chapter.current) {
-          chapter = c.chapter
-          refs.chapter.current.textContent = CHAPTERS[chapter]
+        if (c.chapter !== lastChapter) {
+          lastChapter = c.chapter
+          setChapter(c.chapter)
         }
       },
     })
+    if (labelsRef.current) film.setLabels(labelsRef.current)
 
     let visible = true
     const shouldPlay = () => visible && !document.hidden && !pausedRef.current && !reduce
@@ -116,6 +131,10 @@ export function useHeroFilm(refs: HeroFilmRefs, timing?: HeroTiming) {
         pausedRef.current = true
         sync()
       },
+      setLabels: (texts) => {
+        film.setLabels(texts)
+        if (!film.playing) film.renderAt(lastT)
+      },
     }
     // the labels on the rings are drawn in the display face: redraw a still
     // once it has loaded
@@ -142,5 +161,5 @@ export function useHeroFilm(refs: HeroFilmRefs, timing?: HeroTiming) {
     else controls.current?.play()
   }
 
-  return { paused, toggle }
+  return { paused, toggle, chapter }
 }

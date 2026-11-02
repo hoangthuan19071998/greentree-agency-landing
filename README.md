@@ -113,4 +113,4 @@ Both pages open with `<FilmHero />`. Change its tempo with the `timing` prop or
 ```
 
 Phases: `sow`, `grow`, `hold`, `dive`, `bloom`, `rings`, `fade` (defaults in
-`DEFAULT_PHASES`, an 11 s loop).
+`DEFAULT_PHASES`, a 10.1 s loop).

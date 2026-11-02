@@ -25,11 +25,11 @@ export type HeroPhase =
   | "fade";
 export type HeroPhases = Record<HeroPhase, number>;
 
-/** Real seconds each phase lasts at speed 1 (11 s per loop). */
+/** Real seconds each phase lasts at speed 1 (10.1 s per loop). */
 export const DEFAULT_PHASES: HeroPhases = {
   sow: 1.2, //   a seed falls and is sown, close up
-  grow: 3.4, //  roots, then the tree; the camera pulls back
-  hold: 1.0, //  the grown tree, headline A
+  grow: 2.5, //  roots, then the tree; the camera pulls back
+  hold: 1.0, //  the grown tree, headline A: the pause before the dive
   dive: 1.3, //  into the trunk
   bloom: 1.5, // the rings open from the heart
   rings: 2.0, // rings, service labels, light pulses, headline B
@@ -40,7 +40,9 @@ export const DEFAULT_PHASES: HeroPhases = {
 // never changes; only the real time spent between these points does.
 const STORY_ENDS: Record<HeroPhase, number> = {
   sow: 1.6,
-  grow: 7.9,
+  // the tree is complete and the camera has pulled back by g = 4.6; from
+  // here to the dive is all `hold`
+  grow: 6.2,
   hold: 8.5,
   dive: 10.1,
   bloom: 11.6,
@@ -177,8 +179,3 @@ export function copyAt(t: number) {
     progress: clamp(t / (DURATION - FADE_OUT)),
   };
 }
-
-export const CHAPTERS = [
-  "01 / From seed to canopy",
-  "02 / Rings of growth",
-] as const;

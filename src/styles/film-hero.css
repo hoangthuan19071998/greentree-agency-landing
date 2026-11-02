@@ -59,6 +59,11 @@
   letter-spacing: -0.005em;
   will-change: opacity, transform;
 }
+/* Vietnamese runs longer and stacks its diacritics: a size down, more leading */
+:lang(vi) .film-hero-title {
+  font-size: clamp(40px, 5.2vw, 88px);
+  line-height: 1.12;
+}
 .film-hero-title em {
   color: #c9d8b0;
 }
@@ -146,6 +151,9 @@
   }
   .film-hero-title {
     font-size: clamp(36px, 10vw, 64px);
+  }
+  :lang(vi) .film-hero-title {
+    font-size: clamp(32px, 8.6vw, 56px);
   }
   .film-hero-sub {
     margin-top: 14px;
