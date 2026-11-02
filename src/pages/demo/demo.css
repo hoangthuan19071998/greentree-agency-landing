@@ -10,3 +10,405 @@
   New classes added to components in this folder can be used unscoped, as
   long as their names don't already exist in index.css.
 */
+
+/* ==========================================================================
+   F.A.Q (sections/FaqSection.tsx)
+   ========================================================================== */
+.faq {
+  background: var(--color-canopy);
+  color: var(--color-linen);
+}
+.faq-inner {
+  padding-block: 150px 160px;
+}
+.faq-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin: 0 0 120px;
+  font-weight: 400;
+}
+.faq-letter {
+  font-size: clamp(96px, 15vw, 240px);
+  line-height: .8;
+  color: var(--color-lichen);
+}
+.faq-caption {
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-sage-dim);
+}
+
+.faq-list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1080px;
+  border-top: 1px solid var(--color-rule-dark);
+}
+.faq-item {
+  border-bottom: 1px solid var(--color-rule-dark);
+  transition: border-color .4s var(--ease-grow);
+}
+.faq-item.is-open {
+  border-bottom-color: var(--color-lichen);
+}
+.faq-q {
+  margin: 0;
+  font: inherit;
+}
+.faq-btn {
+  display: grid;
+  grid-template-columns: 72px 1fr 28px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 30px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.faq-btn:focus-visible {
+  outline: 2px solid var(--color-lichen);
+  outline-offset: 4px;
+}
+.faq-num {
+  font-size: 13px;
+  letter-spacing: .16em;
+  color: var(--color-sage-dim);
+}
+.faq-text {
+  font-size: clamp(15px, 1.35vw, 19px);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+  transition: color .3s, transform .5s var(--ease-grow);
+}
+.faq-btn:hover .faq-text,
+.faq-item.is-open .faq-text {
+  color: var(--color-lichen);
+}
+.faq-btn:hover .faq-text {
+  transform: translateX(6px);
+}
+/* a plus drawn in CSS that turns into a cross when open */
+.faq-plus {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  justify-self: end;
+  transition: transform .5s var(--ease-grow);
+}
+.faq-plus::before,
+.faq-plus::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1.5px;
+  margin-top: -.75px;
+  background: var(--color-lichen);
+}
+.faq-plus::after {
+  transform: rotate(90deg);
+}
+.faq-item.is-open .faq-plus {
+  transform: rotate(45deg);
+}
+
+/* height animates through grid rows; hidden answers leave the tab order */
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows .6s var(--ease-grow), visibility 0s .6s;
+}
+.faq-item.is-open .faq-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows .6s var(--ease-grow), visibility 0s;
+}
+.faq-panel-inner {
+  overflow: hidden;
+}
+.faq-a {
+  margin: 0;
+  padding: 0 44px 34px 88px;
+  max-width: 820px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-sage-dim);
+}
+
+/* ==========================================================================
+   Footer (sections/SiteFooter.tsx)
+   ========================================================================== */
+.sfoot {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-heartwood);
+  color: var(--color-mist);
+  border-top: 1px solid var(--color-rule-deep);
+}
+.sfoot-inner {
+  position: relative;
+  z-index: 1;
+  padding-block: 64px 40px;
+}
+.sfoot a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .3s, border-color .3s;
+}
+.sfoot a:hover {
+  color: var(--color-lichen);
+}
+
+.sfoot-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 32px;
+}
+.sfoot-label {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-sage-dim);
+}
+.sfoot-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.sfoot-col-end {
+  justify-self: end;
+  text-align: right;
+}
+.sfoot-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.sfoot .sfoot-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  color: var(--color-linen);
+}
+.sfoot-brand img {
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  border-radius: 50%;
+  background: var(--color-lichen);
+}
+
+.sfoot-stage {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  min-height: 380px;
+  margin-top: 24px;
+}
+.sfoot .sfoot-big {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-rule-dark);
+  font-size: clamp(24px, 2.9vw, 46px);
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-linen);
+}
+/* phone high on the left, e-mail low on the right, the emblem between */
+.sfoot-stage > .sfoot-big:first-of-type {
+  align-self: flex-start;
+  margin-top: 24px;
+}
+.sfoot-big-end {
+  align-self: flex-end;
+  margin-bottom: 24px;
+}
+.sfoot .sfoot-big:hover {
+  color: var(--color-lichen);
+  border-bottom-color: var(--color-lichen);
+}
+/* the tree-ring mark, cut into vertical strands like a halftone print */
+.sfoot-emblem {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  color: var(--color-lichen);
+  opacity: .55;
+  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 6px);
+  mask-image: repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 6px);
+}
+.sfoot-emblem svg {
+  display: block;
+  animation: cspin 60s linear infinite;
+}
+
+.sfoot-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-rule-deep);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--color-sage-dim);
+}
+.sfoot-motto {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: .02em;
+  text-transform: none;
+  color: var(--color-lichen);
+}
+
+/* wood-grain strands rising along the bottom edge */
+.sfoot-grain {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 110px;
+  margin-top: 8px;
+  padding-inline: 2px;
+}
+.sfoot-grain span {
+  flex: 0 0 auto;
+  width: 3px;
+  height: calc(var(--h) * 100%);
+  background: var(--color-moss);
+}
+.sfoot-grain span:nth-child(3n) {
+  width: 2px;
+  background: var(--color-ring-mid);
+}
+
+@media (max-width: 1100px) {
+  .faq-btn {
+    grid-template-columns: 48px 1fr 24px;
+  }
+  .faq-a {
+    padding-left: 64px;
+  }
+  .sfoot-stage {
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    min-height: 420px;
+  }
+  .sfoot-stage > .sfoot-big:first-of-type,
+  .sfoot-big-end {
+    align-self: center;
+    margin: 0;
+  }
+}
+@media (max-width: 760px) {
+  .faq-inner {
+    padding-block: 96px 110px;
+  }
+  .faq-head {
+    margin-bottom: 64px;
+  }
+  .faq-caption {
+    display: none;
+  }
+  .faq-btn {
+    grid-template-columns: 34px 1fr 20px;
+    gap: 12px;
+    padding: 22px 0;
+  }
+  .faq-text {
+    letter-spacing: .06em;
+  }
+  .faq-a {
+    padding: 0 0 26px 46px;
+    font-size: 15px;
+  }
+  .sfoot-top {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sfoot .sfoot-brand {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: 16px;
+  }
+  .sfoot-stage {
+    min-height: 340px;
+  }
+  .sfoot .sfoot-big {
+    font-size: clamp(15px, 4.6vw, 26px);
+    letter-spacing: .02em;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+  .sfoot-emblem {
+    opacity: .3;
+  }
+  .sfoot-emblem svg {
+    width: 240px;
+    height: 240px;
+  }
+  .sfoot-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+  .sfoot-grain {
+    height: 70px;
+  }
+  .sfoot-grain span:nth-child(2n) {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .sfoot-nav a,
+  .sfoot-bar a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-panel,
+  .faq-item.is-open .faq-panel,
+  .faq-plus,
+  .faq-text {
+    transition: none;
+  }
+  .sfoot-emblem svg {
+    animation: none;
+  }
+}

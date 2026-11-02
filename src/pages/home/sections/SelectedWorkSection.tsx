@@ -1,10 +1,58 @@
-import type { FC, TouchEvent } from 'react'
+import type { FC, ReactNode, TouchEvent } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, ExternalLink, TrendingUp } from 'lucide-react'
 import { MEDIA } from '@/config/site'
-import { workProjects } from '@/data/work'
+import { workProjectsByLang } from '@/data/work'
 import type { WorkProject } from '@/data/work'
 import { matches, useMediaQuery } from '@/hooks/useMediaQuery'
+import { useCopy } from '@/i18n/lang'
+import type { Localized } from '@/i18n/lang'
+
+const copy: Localized<{
+  eyebrow: string
+  title: ReactNode
+  lede: string
+  prevProject: string
+  nextProject: string
+  prevSlide: string
+  nextSlide: string
+  goToPage: (n: number) => string
+  visit: string
+  logoAlt: (client: string) => string
+}> = {
+  en: {
+    eyebrow: 'Case Studies & Partners',
+    title: (
+      <>
+        Selected <em className="accent-moss">work</em>
+      </>
+    ),
+    lede: 'Real partnerships with leading brands in Da Nang and across Vietnam — measured through performance and sustainable growth.',
+    prevProject: 'Previous project',
+    nextProject: 'Next project',
+    prevSlide: 'Previous slide',
+    nextSlide: 'Next slide',
+    goToPage: (n) => `Go to page ${n}`,
+    visit: 'Visit',
+    logoAlt: (client) => `${client} logo`,
+  },
+  vi: {
+    eyebrow: 'Dự án & Đối tác',
+    title: (
+      <>
+        Dự án <em className="accent-moss">tiêu biểu</em>
+      </>
+    ),
+    lede: 'Hợp tác thực tế với những thương hiệu hàng đầu tại Đà Nẵng và khắp Việt Nam — đo bằng hiệu quả và tăng trưởng bền vững.',
+    prevProject: 'Dự án trước',
+    nextProject: 'Dự án tiếp theo',
+    prevSlide: 'Trang trước',
+    nextSlide: 'Trang sau',
+    goToPage: (n) => `Đến trang ${n}`,
+    visit: 'Xem',
+    logoAlt: (client) => `Logo ${client}`,
+  },
+}
 
 const SWIPE_THRESHOLD = 45
 const AUTOPLAY_MS = 6000
@@ -24,6 +72,8 @@ function useCarouselLayout() {
 }
 
 export const SelectedWorkSection: FC = () => {
+  const t = useCopy(copy)
+  const workProjects = useCopy(workProjectsByLang)
   const { perView, gap } = useCarouselLayout()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
@@ -82,14 +132,11 @@ export const SelectedWorkSection: FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="w-2 h-2 rounded-full bg-moss" />
-            <span className="work-eyebrow">Case Studies & Partners</span>
+            <span className="work-eyebrow">{t.eyebrow}</span>
           </div>
-          <h2 className="serif rv work-title">
-            Selected <em className="accent-moss">work</em>
-          </h2>
+          <h2 className="serif rv work-title">{t.title}</h2>
           <p className="rv text-sm md:text-base text-bark font-light mt-3 max-w-[580px] leading-[1.6]">
-            Real partnerships with leading brands in Da Nang and across Vietnam {'—'} measured
-            through performance and sustainable growth.
+            {t.lede}
           </p>
         </div>
 
@@ -98,10 +145,10 @@ export const SelectedWorkSection: FC = () => {
             <span className="text-heartwood font-semibold">0{activeIndex + 1}</span> / 0{maxIndex + 1}
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={handlePrev} aria-label="Previous project" className={ctrlBtn}>
+            <button onClick={handlePrev} aria-label={t.prevProject} className={ctrlBtn}>
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <button onClick={handleNext} aria-label="Next project" className={ctrlBtn}>
+            <button onClick={handleNext} aria-label={t.nextProject} className={ctrlBtn}>
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
@@ -134,17 +181,17 @@ export const SelectedWorkSection: FC = () => {
                 className="min-w-0"
                 style={{ flex: `0 0 calc((100% - ${(perView - 1) * gap}px) / ${perView})` }}
               >
-                <WorkCard project={project} />
+                <WorkCard project={project} visit={t.visit} logoAlt={t.logoAlt(project.client)} />
               </div>
             ))}
           </div>
         </div>
 
         {/* Side arrows: shown on desktop hover */}
-        <button onClick={handlePrev} aria-label="Previous slide" className={`${sideBtn} -left-5`} style={sideBtnStyle}>
+        <button onClick={handlePrev} aria-label={t.prevSlide} className={`${sideBtn} -left-5`} style={sideBtnStyle}>
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <button onClick={handleNext} aria-label="Next slide" className={`${sideBtn} -right-5`} style={sideBtnStyle}>
+        <button onClick={handleNext} aria-label={t.nextSlide} className={`${sideBtn} -right-5`} style={sideBtnStyle}>
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
@@ -154,7 +201,7 @@ export const SelectedWorkSection: FC = () => {
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
-            aria-label={`Go to page ${idx + 1}`}
+            aria-label={t.goToPage(idx + 1)}
             className="w-11 h-11 flex items-center justify-center cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-moss"
           >
             <span
@@ -172,7 +219,11 @@ export const SelectedWorkSection: FC = () => {
 const metricValue = 'block text-base sm:text-lg lg:text-xl font-semibold text-heartwood'
 const metricLabel = 'text-xs sm:text-[13px] uppercase tracking-[0.06em] text-stone whitespace-nowrap'
 
-const WorkCard: FC<{ project: WorkProject }> = ({ project }) => (
+const WorkCard: FC<{ project: WorkProject; visit: string; logoAlt: string }> = ({
+  project,
+  visit,
+  logoAlt,
+}) => (
   <a
     href={project.url}
     target="_blank"
@@ -185,12 +236,12 @@ const WorkCard: FC<{ project: WorkProject }> = ({ project }) => (
           {project.category}
         </span>
         <span className="absolute bottom-3 right-3 z-10 text-xs sm:text-[13px] font-medium px-2.5 py-1 rounded-full bg-heartwood text-linen flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
-          <span>Visit</span>
+          <span>{visit}</span>
           <ExternalLink className="w-3 h-3" />
         </span>
         <img
           src={project.logo}
-          alt={`${project.client} logo`}
+          alt={logoAlt}
           className="max-h-[75%] max-w-[70%] object-contain filter group-hover:scale-108 transition-transform duration-500 ease-out"
           loading="lazy"
         />

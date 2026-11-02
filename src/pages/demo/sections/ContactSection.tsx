@@ -1,7 +1,6 @@
 import type { FC } from 'react'
 import { RingButton } from '@/components/RingButton'
-import { RingIcon } from '@/components/RingIcon'
-import { CONTACT, LOGO } from '@/config/site'
+import { CONTACT } from '@/config/site'
 
 export const ContactSection: FC = () => (
   <section id="contact" className="contact">
@@ -35,25 +34,5 @@ export const ContactSection: FC = () => (
         </div>
       </div>
     </div>
-
-    <footer className="pad wrap site-footer">
-      <div className="footer-brand">
-        <span className="footer-logo">
-          <img src={LOGO(64)} alt="Green Tree Agency" width="20" height="20" />
-        </span>
-        <span>
-          {'©'} 2026 Green Tree Agency. Hotline:{' '}
-          <a className="footer-link" href={CONTACT.phoneHref}>
-            {CONTACT.phone}
-          </a>
-        </span>
-      </div>
-      <a className="ring-link back-top" href="#top">
-        Back to top{' '}
-        <span className="back-top-icon">
-          <RingIcon size={22} strokeWidth={4.5} />
-        </span>
-      </a>
-    </footer>
   </section>
 )

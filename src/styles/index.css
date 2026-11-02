@@ -127,6 +127,7 @@ section[id],
 
 /* ---- tree-ring buttons ---- */
 .btn {
+  white-space: nowrap;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -300,6 +301,7 @@ section[id],
 }
 .navlink {
   position: relative;
+  white-space: nowrap;
   color: var(--color-linen);
   text-decoration: none;
   font-size: 14px;
@@ -331,6 +333,65 @@ section[id],
   transform: scaleX(0);
   transform-origin: left;
   will-change: transform;
+}
+
+/* Language switch: EN | VI */
+.navlinks,
+.lang-switch {
+  margin-left: auto;
+}
+.lang-switch {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 44px;
+  padding: 3px;
+  border: 1px solid var(--color-ring-mid);
+  border-radius: 999px;
+}
+.lang-opt {
+  min-width: 40px;
+  height: 100%;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--color-sage-dim);
+  font: 600 12px/1 var(--font-sans);
+  letter-spacing: .12em;
+  cursor: pointer;
+  transition: background .35s var(--ease-grow), color .35s;
+}
+.lang-opt:hover {
+  color: var(--color-linen);
+}
+.lang-opt[aria-pressed="true"] {
+  background: var(--color-lichen);
+  color: var(--color-heartwood);
+}
+.lang-opt:focus-visible {
+  outline: 2px solid var(--color-lichen);
+  outline-offset: 2px;
+}
+/* the copy inside the phone menu, on lichen */
+.lang-switch-menu {
+  display: none;
+  align-self: flex-start;
+  margin: 12px 0 4px;
+  border-color: var(--color-sage-dim);
+}
+.lang-switch-menu .lang-opt {
+  color: var(--color-stone);
+}
+.lang-switch-menu .lang-opt:hover {
+  color: var(--color-heartwood);
+}
+.lang-switch-menu .lang-opt[aria-pressed="true"] {
+  background: var(--color-heartwood);
+  color: var(--color-linen);
+}
+.lang-switch-menu .lang-opt:focus-visible {
+  outline-color: var(--color-heartwood);
 }
 
 /* Compact booking pill (narrow screens, see responsive block) */
@@ -994,6 +1055,120 @@ section[id],
 }
 
 /* ==========================================================================
+   Clients: logo row under the hero
+   ========================================================================== */
+.clients {
+  padding-block: 72px;
+  text-align: center;
+}
+.clients-eyebrow {
+  margin: 0 0 32px;
+}
+/* flex, not grid, so a short last row stays centred */
+.clients-list {
+  --per-row: 5;
+  --gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.client-logo {
+  flex: 0 0 calc((100% - (var(--per-row) - 1) * var(--gap)) / var(--per-row));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 112px;
+  padding: 16px;
+  border: 1px solid var(--color-rule-light);
+  border-radius: 12px;
+  background: var(--color-pith);
+  transition: border-color .4s var(--ease-grow);
+}
+.client-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  /* the logos are JPEGs on white: let the tile show through */
+  mix-blend-mode: multiply;
+  filter: grayscale(1);
+  opacity: .7;
+  transition: filter .4s var(--ease-grow), opacity .4s;
+}
+.client-logo:hover {
+  border-color: var(--color-moss);
+}
+.client-logo:hover img {
+  filter: none;
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Stats
+   ========================================================================== */
+.stats {
+  background: var(--color-heartwood);
+  color: var(--color-linen);
+}
+.stats-inner {
+  padding-block: 120px;
+}
+.stats-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 56px;
+}
+.stats-title {
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: .98;
+  font-weight: 400;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--color-rule-deep);
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 36px 28px 8px 0;
+}
+.stat + .stat {
+  padding-left: 28px;
+  border-left: 1px solid var(--color-rule-deep);
+}
+.stat dd {
+  margin: 0;
+}
+.stat-value {
+  order: -1;
+  font-size: clamp(56px, 6vw, 96px);
+  line-height: .9;
+  color: var(--color-lichen);
+  font-variant-numeric: lining-nums;
+}
+.stat-label {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.stat-note {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-sage-dim);
+}
+
+/* ==========================================================================
    Quote
    ========================================================================== */
 .quote {
@@ -1250,11 +1425,43 @@ section[id],
   .m-book {
     display: inline-flex;
   }
+  .m-menu-btn {
+    margin-left: 0;
+  }
+}
+
+/* Small laptops: room for the longer Vietnamese nav on one line */
+@media (max-width: 1320px) and (min-width: 1101px) {
+  .navlinks {
+    gap: 20px;
+  }
+  .brand-tag {
+    display: none;
+  }
 }
 
 @media (max-width: 1100px) and (min-width: 761px) {
   .process-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .clients-list {
+    --per-row: 3;
+  }
+}
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stat:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--color-rule-deep);
+  }
+  .stat {
+    padding-bottom: 32px;
   }
 }
 
@@ -1313,6 +1520,20 @@ section[id],
   .process-glyph { font-size: 72px; line-height: .9; }
   .process-body { margin-top: 12px; }
 
+  /* clients, stats */
+  .clients { padding-block: 48px; }
+  .clients-eyebrow { margin-bottom: 24px; line-height: 1.6; }
+  .clients-list { --per-row: 3; --gap: 10px; }
+  .client-logo { height: 84px; padding: 12px; }
+  .stats-inner { padding-block: 80px; }
+  .stats-head { margin-bottom: 36px; }
+  .stat { padding: 24px 12px 24px 0; }
+  .stat + .stat { padding-left: 12px; }
+  .stat:nth-child(odd) { padding-left: 0; }
+  .stat-value { font-size: clamp(44px, 13vw, 56px); }
+  .stat-label { font-size: 11px; letter-spacing: .1em; }
+  .stat-note { font-size: 13px; }
+
   /* contact */
   .contact-link { font-size: 22px; overflow-wrap: anywhere; }
   .contact-links { align-items: flex-start; }
@@ -1320,6 +1541,9 @@ section[id],
 }
 
 @media (max-width: 480px) {
+  .site-header-bar > .lang-switch { display: none; }
+  .lang-switch-menu { display: inline-flex; }
+  .m-menu-btn { margin-left: auto; }
   .brand-tag { display: none; }
   /* keep logo + menu + booking pill on one row at 360px */
   .brand-name { font-size: 22px; }

@@ -8,7 +8,10 @@ import { ProcessSection } from './sections/ProcessSection'
 import { SelectedWorkSection } from './sections/SelectedWorkSection'
 import { QuoteSection } from './sections/QuoteSection'
 import { ContactSection } from './sections/ContactSection'
+import { FaqSection } from './sections/FaqSection'
+import { SiteFooter } from './sections/SiteFooter'
 import { MEDIA } from '@/config/site'
+import { useInPageAnchors } from '@/hooks/useInPageAnchors'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useRevealOnScroll } from '@/hooks/useRevealOnScroll'
 import { useScrollScene } from '@/hooks/useScrollScene'
@@ -22,6 +25,7 @@ export function DemoPage() {
 
   const { rootRef, progressRef, journey } = useScrollScene(horizontal)
   useRevealOnScroll(rootRef)
+  useInPageAnchors()
 
   return (
     <div className={horizontal ? 'gt page-demo js js-hz' : 'gt page-demo js'} ref={rootRef}>
@@ -35,7 +39,9 @@ export function DemoPage() {
       <ProcessSection />
       <SelectedWorkSection />
       <QuoteSection />
+      <FaqSection />
       <ContactSection />
+      <SiteFooter />
     </div>
   )
 }
