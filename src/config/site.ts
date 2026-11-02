@@ -4,8 +4,13 @@ export const CONTACT = {
   phoneHref: 'tel:+84359943961',
 } as const
 
+// Built from the site's data by `npm run profile` (scripts/company-profile).
 export const COMPANY_PROFILE = {
   href: '/greentree-company-profile.pdf',
+  hrefByLang: {
+    en: '/greentree-company-profile.pdf',
+    vi: '/greentree-company-profile-vi.pdf',
+  },
   label: 'Company Profile',
   ariaLabel: 'Open the Green Tree Agency company profile PDF in a new tab',
 } as const
